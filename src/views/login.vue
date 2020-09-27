@@ -50,16 +50,14 @@ export default {
   name: "Login",
   data() {
     return {
-      userName: "",
-      password: "",
+      userName: "admin",
+      password: "18588888888",
       userFocus: false,
       passFocus: false
     };
   },
   methods: {
     login() {
-      this.$router.push("/Home");
-      return;
       if (!this.userName) {
         this.$message.error("请输入账号");
         return false;
@@ -72,24 +70,15 @@ export default {
         password: this.$md5(this.password),
         username: this.userName
       };
-      this.$post("/w10/auth/login", parmas).then(datas => {
+      this.$post("auth/login", parmas).then(datas => {
+        console.log(datas);
         if (datas.code == 200) {
           const { data } = datas;
           localStorage.setItem("token", data.token);
           localStorage.setItem("ticket", data.ticket);
           localStorage.setItem("name", data.user.name);
           localStorage.setItem("activeTime", data.user.activeTime);
-          if (data.user.type == 1) {
-            //主账号
-            let activeTime = data.user.activeTime;
-            if (activeTime) {
-              this.$router.push("/Index");
-            } else {
-              this.$router.push("/AssistantManager");
-            }
-          } else {
-            //子账号
-          }
+          this.$router.push("/Home");
         } else if (datas.code == 10001) {
           this.$message.error("账号或密码输入错误");
         } else if (datas.code == 10002) {
